@@ -1,10 +1,9 @@
 import db from "~/db";
 import { Fieldset } from "primereact/fieldset";
 import { InputText } from "primereact/inputtext";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { Button } from "primereact/button";
 import { InputOtp } from "primereact/inputotp";
-import { SessionContext } from "~/sessionContext";
 import type { Session } from "@supabase/supabase-js";
 
 
@@ -48,6 +47,8 @@ export function LoginForm(props : {sessionCallback : (session: Session) => void 
       if (!session) {
         throw new Error("No session");
       }
+      const s = await db.auth.getSession()
+      console.log(`getSession ${JSON.stringify(s, null, 2)}`)  
       props.sessionCallback(session)
     } finally {
       setLoading(false);

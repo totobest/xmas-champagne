@@ -5,8 +5,9 @@ import { Toast } from "primereact/toast";
 import { Fieldset } from "primereact/fieldset";
 import { Dropdown } from "primereact/dropdown";
 import { Button } from "primereact/button";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { SelectItemOptionsType } from "primereact/selectitem";
+import { useToastContext } from "~/ToastContext";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -15,30 +16,56 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
-export async function clientLoader({ params }: Route.ClientLoaderArgs) {
+async function getVote() {
+  const {
+    data: { user },
+    error,
+  } = await db.auth.getUser();
+
+  if (!user) throw new Error("No user");
+  console.log(`clientLoader user ${JSON.stringify(user, null, 2)}`);
   const response = await db
     .from("vote")
     .select()
-    .order("created_at", { ascending: false })
+    .eq("user_id", user.id)
     .maybeSingle();
   if (response.error) {
     throw response.error;
   }
-  const vote = response.data
-   
+  const vote = response.data;
+  console.log(`clientLoader vote ${JSON.stringify(vote, null, 2)}`);
   return vote ? vote : { guess_1: "", guess_2: "", guess_3: "" };
 }
 
-export default function Page({ loaderData: vote }: Route.ComponentProps) {
-    const [guess_1, setGuess_1] = useState(vote.guess_1);
-    const [guess_2, setGuess_2] = useState(vote.guess_2);
-    const [guess_3, setGuess_3] = useState(vote.guess_3);
-  
+export default function Page() {
   const guesses: SelectItemOptionsType = ["Ruinard", "Bio", "Gosset"];
-  const toast = useRef<Toast>(null);
+  const toast = useToastContext()
+
+  const [guess_1, setGuess_1] = useState("");
+  const [guess_2, setGuess_2] = useState("");
+  const [guess_3, setGuess_3] = useState("");
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    setLoading(true);
+    getVote()
+      .then((vote) => {
+        setGuess_1(vote.guess_1);
+        setGuess_2(vote.guess_2);
+        setGuess_3(vote.guess_3);
+      })
+      .catch((error) => {
+        toast.show({
+          severity: "error",
+          detail: error.message,
+        });
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, []);
+
 
   async function submit() {
-    if (!toast.current) return;
     const { data, error } = await db
       .from("vote")
       .upsert({
@@ -48,27 +75,27 @@ export default function Page({ loaderData: vote }: Route.ComponentProps) {
       })
       .select();
     if (error) {
-      toast.current?.show({
+      toast.show({
         severity: "error",
-        summary: "Error",
         detail: error.message,
       });
     } else {
-      toast.current.show({
+      toast.show({
         severity: "info",
-        summary: "Info",
-        detail: "Message Content",
+        detail: "Vote enregistré",
       });
-      
+      db.auth.signOut()
     }
   }
 
   const isValid = guess_1 && guess_2 && guess_3;
+  if (loading) {
+    return <ProgressSpinner />;
+  }
 
   return (
     <>
       <h1>Champagne contest</h1>
-      <Toast ref={toast} />
       <Fieldset legend="Votes">
         <div className="field grid">
           <label className="col" htmlFor="guess_1">

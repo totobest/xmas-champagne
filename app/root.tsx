@@ -13,6 +13,7 @@ import "primereact/resources/themes/lara-light-purple/theme.css";
 import "primeflex/primeflex.css";
 import { SessionContext } from "./sessionContext";
 import AuthProvider from "./AuthProvider";
+import ToastProvider from "./ToastProvider";
 
 
 //import stylesheet from "./app.css?url";
@@ -29,7 +30,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
-        <PrimeReactProvider><AuthProvider>{children}</AuthProvider></PrimeReactProvider>
+        <PrimeReactProvider><ToastProvider><AuthProvider>{children}</AuthProvider></ToastProvider></PrimeReactProvider>
         <ScrollRestoration />
         <Scripts />
       </body>

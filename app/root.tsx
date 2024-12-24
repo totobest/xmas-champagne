@@ -11,6 +11,8 @@ import { PrimeReactProvider } from "primereact/api";
 import type { Route } from "./+types/root";
 import "primereact/resources/themes/lara-light-purple/theme.css";
 import "primeflex/primeflex.css";
+import { SessionContext } from "./sessionContext";
+import AuthProvider from "./AuthProvider";
 
 
 //import stylesheet from "./app.css?url";
@@ -27,7 +29,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
-        <PrimeReactProvider>{children}</PrimeReactProvider>
+        <PrimeReactProvider><AuthProvider>{children}</AuthProvider></PrimeReactProvider>
         <ScrollRestoration />
         <Scripts />
       </body>

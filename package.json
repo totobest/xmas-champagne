@@ -6,27 +6,29 @@
     "build": "cross-env NODE_ENV=production react-router build",
     "dev": "react-router dev",
     "start": "cross-env NODE_ENV=production react-router-serve ./build/server/index.js",
-    "typecheck": "react-router typegen && tsc"
+    "typecheck": "react-router typegen && tsc",
+    "supabase": "supabase"
   },
   "dependencies": {
     "@react-router/node": "^7.1.1",
     "@react-router/serve": "^7.1.1",
-    "isbot": "^5.1.17",
+    "@supabase/supabase-js": "^2.47.10",
+    "cross-env": "^7.0.3",
+    "isbot": "^5",
+    "primeflex": "^3.3.1",
+    "primereact": "^10.8.5",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-router": "^7.1.1"
   },
   "devDependencies": {
     "@react-router/dev": "^7.1.1",
-    "@types/node": "^20",
-    "@types/react": "^19.0.1",
-    "@types/react-dom": "^19.0.1",
-    "autoprefixer": "^10.4.20",
-    "cross-env": "^7.0.3",
-    "postcss": "^8.4.49",
-    "tailwindcss": "^3.4.16",
+    "@types/node": "^22",
+    "@types/react": "^19.0.2",
+    "@types/react-dom": "^19.0.2",
+    "supabase": "^2.1.1",
     "typescript": "^5.7.2",
-    "vite": "^5.4.11",
+    "vite": "^6.0.5",
     "vite-tsconfig-paths": "^5.1.4"
   }
 }

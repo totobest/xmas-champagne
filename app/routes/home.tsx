@@ -62,32 +62,33 @@ export default function Page() {
   }, []);
 
   async function submit() {
-    try {
-      setSubmitLoading(true);
+    toast.show({ severity: "info", detail: "Les votes sont figés" });
+    // try {
+    //   setSubmitLoading(true);
 
-      const { data, error } = await db
-        .from("vote")
-        .upsert({
-          guess_1: guess_1,
-          guess_2: guess_2,
-          guess_3: guess_3,
-          gift_value: giftValue,
-        })
-        .select();
-      if (error) {
-        toast.show({
-          severity: "error",
-          detail: error.message,
-        });
-      } else {
-        toast.show({
-          severity: "info",
-          detail: "Vote enregistré",
-        });
-      }
-    } finally {
-      setSubmitLoading(false);
-    }
+    //   const { data, error } = await db
+    //     .from("vote")
+    //     .upsert({
+    //       guess_1: guess_1,
+    //       guess_2: guess_2,
+    //       guess_3: guess_3,
+    //       gift_value: giftValue,
+    //     })
+    //     .select();
+    //   if (error) {
+    //     toast.show({
+    //       severity: "error",
+    //       detail: error.message,
+    //     });
+    //   } else {
+    //     toast.show({
+    //       severity: "info",
+    //       detail: "Vote enregistré",
+    //     });
+    //   }
+    // } finally {
+    //   setSubmitLoading(false);
+    // }
   }
 
   async function signOut() {

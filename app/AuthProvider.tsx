@@ -8,6 +8,19 @@ import type { Session } from "@supabase/supabase-js";
 import { useToastContext } from "./ToastContext";
 import { ProgressSpinner } from "primereact/progressspinner";
 
+function formatFrenchPhoneNumberToInternational(localNumber: string): string {
+  // Remove any non-digit characters
+  const cleanedNumber = localNumber.replace(/\D/g, '');
+
+  // Check if the number starts with a valid French prefix (0 followed by 1-9)
+  if (cleanedNumber.startsWith('0')) {
+    // Replace the leading 0 with the international code for France (+33)
+    return '+33' + cleanedNumber.substring(1);
+  } else {
+    throw new Error('Invalid French phone number');
+  }
+}
+
 export function LoginFormPhoneOTP() {
   const toast = useToastContext();
 
@@ -22,7 +35,7 @@ export function LoginFormPhoneOTP() {
     setLoading(true);
     try {
       const { data, error } = await db.auth.signInWithOtp({
-        phone: `+33${phoneNumber}`,
+        phone: formatFrenchPhoneNumberToInternational(`${phoneNumber}`),
       });
       if (error) {
         toast.show({ severity: "error", detail: error.message });
@@ -37,11 +50,13 @@ export function LoginFormPhoneOTP() {
   async function verifyOtp() {
     setLoading(true);
     try {
+      console.log("verifyOtp", `+33${phoneNumber}`);
+      console.log("verifyOtp", otp);
       const {
         data: { session },
         error,
       } = await db.auth.verifyOtp({
-        phone: `+33${phoneNumber}`,
+        phone: formatFrenchPhoneNumberToInternational(`${phoneNumber}`),
         token: otp,
         type: "sms",
       });

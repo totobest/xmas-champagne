@@ -22,7 +22,7 @@ export function LoginFormPhoneOTP() {
     setLoading(true);
     try {
       const { data, error } = await db.auth.signInWithOtp({
-        phone: phoneNumber,
+        phone: `+33${phoneNumber}`,
       });
       if (error) {
         toast.show({ severity: "error", detail: error.message });

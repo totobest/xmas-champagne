@@ -39,6 +39,8 @@ export default function Page() {
   const [giftValue, setGiftValue] = useState(0);
   const [loading, setLoading] = useState(true);
   const [submitLoading, setSubmitLoading] = useState(false);
+  const [signOutLoading, setSignOutLoading] = useState(false);
+
   useEffect(() => {
     setLoading(true);
     getVote()
@@ -86,6 +88,11 @@ export default function Page() {
     } finally {
       setSubmitLoading(false);
     }
+  }
+
+  async function signOut() {
+    setSignOutLoading(true)
+    db.auth.signOut().finally(() => setSignOutLoading(false))
   }
 
   const isValid = guess_1 && guess_2 && guess_3;
@@ -180,7 +187,8 @@ export default function Page() {
           <Button
             icon="pi pi-sign-out"
             label="Déconnexion"
-            onClick={() => void db.auth.signOut()}
+            loading={signOutLoading}
+            onClick={signOut}
           />
         }
       />

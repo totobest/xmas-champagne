@@ -90,6 +90,7 @@ export function LoginForm(props: {
 
       <Button
         disabled={!isValid}
+        icon="pi pi-heart" 
         loading={loading}
         label="Valider"
         onClick={() => (step === 0 ? void signInWithOtp() : void verifyOtp())}

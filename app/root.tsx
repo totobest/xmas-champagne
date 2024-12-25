@@ -9,14 +9,10 @@ import {
 import { PrimeReactProvider } from "primereact/api";
 
 import type { Route } from "./+types/root";
-import "primereact/resources/themes/lara-light-purple/theme.css";
 import "primeflex/primeflex.css";
-import { SessionContext } from "./sessionContext";
 import AuthProvider from "./AuthProvider";
 import ToastProvider from "./ToastProvider";
-
-
-//import stylesheet from "./app.css?url";
+import XmasLayout from "./xmax";
 
 export const links: Route.LinksFunction = () => [];
 
@@ -30,7 +26,13 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
-        <PrimeReactProvider><ToastProvider><AuthProvider>{children}</AuthProvider></ToastProvider></PrimeReactProvider>
+        <PrimeReactProvider>
+          <ToastProvider>
+            <XmasLayout>
+            <AuthProvider>{children}</AuthProvider>
+            </XmasLayout>
+          </ToastProvider>
+        </PrimeReactProvider>
         <ScrollRestoration />
         <Scripts />
       </body>

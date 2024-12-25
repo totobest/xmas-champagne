@@ -27,7 +27,7 @@ async function getVote() {
   const response = await db
     .from("vote")
     .select()
-    .eq("user_id", user.id)
+//    .eq("user_id", user.id)
     .maybeSingle();
   if (response.error) {
     throw response.error;
@@ -95,8 +95,7 @@ export default function Page() {
 
   return (
     <>
-      <h1>Champagne contest</h1>
-      <Fieldset legend="Votes">
+      <Fieldset legend="Vote">
         <div className="field grid">
           <label className="col" htmlFor="guess_1">
             Choix bleu :
@@ -141,6 +140,7 @@ export default function Page() {
         </div>
         <Button
           disabled={!isValid}
+          icon="pi pi-gift" 
           label="Valider"
           onClick={() => void submit()}
         />

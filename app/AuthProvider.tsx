@@ -31,6 +31,17 @@ export function LoginFormPhoneOTP() {
   const isValid = phoneNumber !== "" && step === 0  || otp !== "";
   const [loading, setLoading] = useState(false);
 
+  function handleSubmit() {
+    return step === 0 ? void signInWithOtp() : void verifyOtp();
+  }
+
+  const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    console.log("key press", event.key);
+    if (event.key === 'Enter') {
+      handleSubmit();
+    }
+  };
+
   async function signInWithOtp() {
     setLoading(true);
     try {
@@ -72,6 +83,7 @@ export function LoginFormPhoneOTP() {
   }
 
   return (
+    <form onSubmit={handleSubmit}>
     <Fieldset legend="Connexion">
       <div className="field grid">
         <label className="col" htmlFor="guess_1">
@@ -83,6 +95,7 @@ export function LoginFormPhoneOTP() {
             value={phoneNumber}
             onChange={(e) => setPhoneNumber(e.target.value)}
             placeholder="0601020304"
+//            onKeyUp={handleKeyPress}
           />{" "}
         </div>
       </div>
@@ -97,6 +110,7 @@ export function LoginFormPhoneOTP() {
               length={6}
               integerOnly
               onChange={(e) => setOpt(e.value as string)}
+//              onKeyDown={handleKeyPress}
             />{" "}
           </div>
         </div>
@@ -107,10 +121,12 @@ export function LoginFormPhoneOTP() {
         icon="pi pi-heart"
         loading={loading}
         label="Valider"
-        onClick={() => (step === 0 ? void signInWithOtp() : void verifyOtp())}
+        onClick={handleSubmit}
       />
     </Fieldset>
+    </form>
   );
+
 }
 
 export function LoginFormPhonePW() {

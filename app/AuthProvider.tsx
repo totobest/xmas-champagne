@@ -40,7 +40,7 @@ export function LoginFormPhoneOTP() {
         data: { session },
         error,
       } = await db.auth.verifyOtp({
-        phone: phoneNumber,
+        phone: `+33${phoneNumber}`,
         token: otp,
         type: "sms",
       });
@@ -68,6 +68,7 @@ export function LoginFormPhoneOTP() {
             disabled={step === 1}
             value={phoneNumber}
             onChange={(e) => setPhoneNumber(e.target.value)}
+            placeholder="0601020304"
           />{" "}
         </div>
       </div>

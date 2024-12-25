@@ -92,7 +92,7 @@ export default function Page() {
 
   async function signOut() {
     setSignOutLoading(true)
-    db.auth.signOut().finally(() => setSignOutLoading(false))
+    db.auth.signOut({scope: "local"}).finally(() => setSignOutLoading(false))
   }
 
   const isValid = guess_1 && guess_2 && guess_3;

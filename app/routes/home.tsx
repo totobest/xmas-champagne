@@ -195,7 +195,7 @@ export default function Page() {
         end={
           <Button
             icon="pi pi-sign-out"
-            label="Déconnexion"
+            label=""
             loading={signOutLoading}
             onClick={signOut}
           />

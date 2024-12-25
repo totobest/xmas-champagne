@@ -10,6 +10,7 @@ import { useEffect, useRef, useState } from "react";
 import type { SelectItemOptionsType } from "primereact/selectitem";
 import { useToastContext } from "~/ToastContext";
 import { InputNumber } from "primereact/inputnumber";
+import { Toolbar } from "primereact/toolbar";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -98,6 +99,7 @@ export default function Page() {
 
   return (
     <>
+      
       <Fieldset legend="Vote">
         <div className="field grid">
           <label className="col" htmlFor="guess_1">
@@ -174,6 +176,15 @@ export default function Page() {
           onClick={() => void submit()}
         />
       </Fieldset>
+      <Toolbar
+        end={
+          <Button
+            icon="pi pi-sign-out"
+            label="Déconnexion"
+            onClick={() => void db.auth.signOut()}
+          />
+        }
+      />
     </>
   );
 }

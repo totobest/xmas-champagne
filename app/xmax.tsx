@@ -1,6 +1,6 @@
 import React, { type ReactNode } from 'react';
 import 'primeflex/primeflex.css';                    // PrimeFlex for layout utilities
-import 'primereact/resources/themes/lara-light-indigo/theme.css'; // or any other PrimeReact theme
+import 'primereact/resources/themes/lara-light-purple/theme.css'; // or any other PrimeReact theme
 import 'primereact/resources/primereact.min.css';   // Core PrimeReact CSS
 import 'primeicons/primeicons.css';                 // PrimeIcons
 import { Card } from 'primereact/card';
@@ -41,8 +41,8 @@ export default function XmasLayout({children}: {children: ReactNode}) {
             </main>
 
             {/* Pied de page */}
-            <footer className="p-d-flex p-jc-center p-ai-center" style={{ backgroundColor: '#D72323', color: '#fff', padding: '1rem' }}>
-                <p className="p-m-0">Joyeuses Fêtes 2024 ! Tous droits réservés Tony/Baguette/Alyosha/TotoBest.</p>
+            <footer className="p-d-flex p-jc-center p-ai-center" style={{ backgroundColor: '#D72323', color: '#fff', padding: '0.5rem' }}>
+                <pre className="p-m-0">Joyeuses Fêtes 2024 ! Tous droits réservés Tony/Baguette/Alyosha/TotoBest.</pre>
             </footer>
         </div>
     );

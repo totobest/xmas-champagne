@@ -6,6 +6,7 @@ import { Button } from "primereact/button";
 import { InputOtp } from "primereact/inputotp";
 import type { Session } from "@supabase/supabase-js";
 import { useToastContext } from "./ToastContext";
+import { ProgressSpinner } from "primereact/progressspinner";
 
 export function LoginFormPhoneOTP() {
   const toast = useToastContext();
@@ -207,8 +208,19 @@ export default function AuthProvider({
 }: {
   children: React.ReactNode;
 }) {
+  const [loading, setLoading] = useState(true)
   const [session, setSession] = useState<Session | null>(null);
   const [name, setName] = useState("");
+  useEffect(() => {
+    db.auth.getSession().then(({data, error}) => {
+      const {session} = data
+      if (session) {
+        setSession(session)
+        setName(session?.user?.user_metadata.name);
+      }
+  }).finally(() => setLoading(false))
+
+  }, [])
   useEffect(() => {
     const { data } = db.auth.onAuthStateChange((event, session) => {
       console.log("auth event", event);
@@ -237,6 +249,10 @@ export default function AuthProvider({
       data.subscription.unsubscribe();
     };
   }, []);
+
+  if (loading) {
+    return <ProgressSpinner/>
+  }
 
   if (session) {
     if (!name) {

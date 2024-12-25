@@ -7,18 +7,14 @@ import { InputOtp } from "primereact/inputotp";
 import type { Session } from "@supabase/supabase-js";
 import { useToastContext } from "./ToastContext";
 
-export function LoginForm(props: {
-  sessionCallback: (session: Session) => void;
-}) {
+export function LoginFormPhoneOTP() {
   const toast = useToastContext();
 
   const [step, setStep] = useState(0);
   const [phoneNumber, setPhoneNumber] = useState("");
   const [otp, setOpt] = useState("");
-  const [pw, setPw] = useState("");
 
-  const isValid =
-    phoneNumber !== "" && step === 1 ? otp !== "" : pw !== "";
+  const isValid = phoneNumber !== "" &&  otp !== ""
   const [loading, setLoading] = useState(false);
 
   async function signInWithOtp() {
@@ -47,29 +43,6 @@ export function LoginForm(props: {
         phone: phoneNumber,
         token: otp,
         type: "sms",
-      });
-      if (error) {
-        toast.show({ severity: "error", detail: error.message });
-        throw error;
-      }
-      if (!session) {
-        toast.show({ severity: "error", detail: "No session" });
-        throw new Error("No session");
-      }
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  async function verifyPw() {
-    setLoading(true);
-    try {
-      const {
-        data: { session },
-        error,
-      } = await db.auth.signInWithPassword({
-        phone: phoneNumber,
-        password: pw,
       });
       if (error) {
         toast.show({ severity: "error", detail: error.message });
@@ -113,23 +86,84 @@ export function LoginForm(props: {
           </div>
         </div>
       )}
-      {step === 2 && (
-        <div className="field grid">
-          <label className="col" htmlFor="guess_1">
-            Ton code :
-          </label>
-          <div className="col">
-            <InputText value={pw} onChange={(e) => setPw(e.target.value)} />{" "}
-          </div>
-        </div>
-      )}
 
       <Button
         disabled={!isValid}
         icon="pi pi-heart"
         loading={loading}
         label="Valider"
-        onClick={() => (step === 0 ? void signInWithOtp() : step === 1 ? void verifyOtp() : void verifyPw())}
+        onClick={() =>
+          step === 0
+            ? void signInWithOtp()
+            : void verifyOtp()
+        }
+      />
+    </Fieldset>
+  );
+}
+
+export function LoginFormPhonePW() {
+  const toast = useToastContext();
+
+  const [phone, setPhone] = useState("");
+  const [pw, setPw] = useState("");
+
+  const isValid = phone !== "" && pw !== "";
+  const [loading, setLoading] = useState(false);
+
+  async function verifyPw() {
+    setLoading(true);
+    try {
+      const {
+        data: { session },
+        error,
+      } = await db.auth.signInWithPassword({
+        phone: phone,
+        password: pw,
+      });
+      if (error) {
+        toast.show({ severity: "error", detail: error.message });
+        throw error;
+      }
+      if (!session) {
+        toast.show({ severity: "error", detail: "No session" });
+        throw new Error("No session");
+      }
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <Fieldset legend="Connexion">
+      <div className="field grid">
+        <label className="col" htmlFor="guess_1">
+          {<>Ton num</> }
+        </label>
+        <div className="col">
+          <InputText
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+          />{" "}
+        </div>
+      </div>
+        <div className="field grid">
+          <label className="col" htmlFor="guess_1">
+            Ton mdp :
+          </label>
+          <div className="col">
+            <InputText value={pw} onChange={(e) => setPw(e.target.value)} />{" "}
+          </div>
+        </div>
+
+      <Button
+        disabled={!isValid}
+        icon="pi pi-heart"
+        loading={loading}
+        label="Valider"
+        onClick={() =>
+            void verifyPw()
+        }
       />
     </Fieldset>
   );
@@ -167,5 +201,5 @@ export default function AuthProvider({
 
   if (session) return children;
 
-  return <LoginForm sessionCallback={setSession} />;
+  return <LoginFormPhoneOTP />;
 }

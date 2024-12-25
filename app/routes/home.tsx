@@ -38,7 +38,7 @@ export default function Page() {
   const [guess_3, setGuess_3] = useState("");
   const [giftValue, setGiftValue] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [submitLoading, setSubmitLoading] = useState(true);
+  const [submitLoading, setSubmitLoading] = useState(false);
   useEffect(() => {
     setLoading(true);
     getVote()

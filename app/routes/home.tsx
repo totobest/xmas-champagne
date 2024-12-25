@@ -38,6 +38,7 @@ export default function Page() {
   const [guess_3, setGuess_3] = useState("");
   const [giftValue, setGiftValue] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [submitLoading, setSubmitLoading] = useState(true);
   useEffect(() => {
     setLoading(true);
     getVote()
@@ -59,26 +60,31 @@ export default function Page() {
   }, []);
 
   async function submit() {
-    const { data, error } = await db
-      .from("vote")
-      .upsert({
-        guess_1: guess_1,
-        guess_2: guess_2,
-        guess_3: guess_3,
-        gift_value: giftValue,
-      })
-      .select();
-    if (error) {
-      toast.show({
-        severity: "error",
-        detail: error.message,
-      });
-    } else {
-      toast.show({
-        severity: "info",
-        detail: "Vote enregistré",
-      });
-      //db.auth.signOut();
+    try {
+      setSubmitLoading(true);
+
+      const { data, error } = await db
+        .from("vote")
+        .upsert({
+          guess_1: guess_1,
+          guess_2: guess_2,
+          guess_3: guess_3,
+          gift_value: giftValue,
+        })
+        .select();
+      if (error) {
+        toast.show({
+          severity: "error",
+          detail: error.message,
+        });
+      } else {
+        toast.show({
+          severity: "info",
+          detail: "Vote enregistré",
+        });
+      }
+    } finally {
+      setSubmitLoading(false);
     }
   }
 
@@ -161,6 +167,7 @@ export default function Page() {
             </div>
             <Button
               disabled={!isValid}
+              loading={submitLoading}
               icon="pi pi-gift"
               label="Valider"
               onClick={() => void submit()}

@@ -92,6 +92,7 @@ export default function Page() {
 
   async function signOut() {
     setSignOutLoading(true);
+    localStorage.clear();
     const resetSessionPromise = db.auth
       .setSession({ access_token: "", refresh_token: "" })
     const signOutPromise = db.auth.signOut({scope: "local"})

@@ -50,8 +50,6 @@ export function LoginFormPhoneOTP() {
   async function verifyOtp() {
     setLoading(true);
     try {
-      console.log("verifyOtp", `+33${phoneNumber}`);
-      console.log("verifyOtp", otp);
       const {
         data: { session },
         error,

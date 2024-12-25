@@ -6,7 +6,7 @@ export default function ToastProvider({ children }: { children: ReactNode }) {
   const toast = useRef<Toast>(null);
   return (
     <>
-      <Toast ref={toast} />
+      <Toast ref={toast} position="center"/>
       {toast.current && (
         <ToastContext.Provider value={toast.current}>
           {children}

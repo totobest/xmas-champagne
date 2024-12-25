@@ -91,9 +91,18 @@ export default function Page() {
   }
 
   async function signOut() {
-    setSignOutLoading(true)
-    db.auth.signOut({scope: "local"}).finally(() => setSignOutLoading(false))
-  }
+    setSignOutLoading(true);
+    const resetSessionPromise = db.auth
+      .setSession({ access_token: "", refresh_token: "" })
+    const signOutPromise = db.auth.signOut({scope: "local"})
+    Promise.all([resetSessionPromise, signOutPromise]).then(() => {
+        window.location.reload();
+      })
+      .catch((error) => {
+        toast.show({ severity: "error", detail: error.message });
+      })
+      .finally(() => setSignOutLoading(false));
+      }
 
   const isValid = guess_1 && guess_2 && guess_3;
 

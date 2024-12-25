@@ -5,9 +5,11 @@ import { Toast } from "primereact/toast";
 import { Fieldset } from "primereact/fieldset";
 import { Dropdown } from "primereact/dropdown";
 import { Button } from "primereact/button";
+import { Divider } from "primereact/divider";
 import { useEffect, useRef, useState } from "react";
 import type { SelectItemOptionsType } from "primereact/selectitem";
 import { useToastContext } from "~/ToastContext";
+import { InputNumber } from "primereact/inputnumber";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -27,7 +29,7 @@ async function getVote() {
   const response = await db
     .from("vote")
     .select()
-//    .eq("user_id", user.id)
+    //    .eq("user_id", user.id)
     .maybeSingle();
   if (response.error) {
     throw response.error;
@@ -39,11 +41,12 @@ async function getVote() {
 
 export default function Page() {
   const guesses: SelectItemOptionsType = ["Ruinard", "Bio", "Gosset"];
-  const toast = useToastContext()
+  const toast = useToastContext();
 
   const [guess_1, setGuess_1] = useState("");
   const [guess_2, setGuess_2] = useState("");
   const [guess_3, setGuess_3] = useState("");
+  const [giftValue, setGiftValue] = useState(0);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
     setLoading(true);
@@ -64,7 +67,6 @@ export default function Page() {
       });
   }, []);
 
-
   async function submit() {
     const { data, error } = await db
       .from("vote")
@@ -72,6 +74,7 @@ export default function Page() {
         guess_1: guess_1,
         guess_2: guess_2,
         guess_3: guess_3,
+        gift_value: giftValue,
       })
       .select();
     if (error) {
@@ -84,11 +87,11 @@ export default function Page() {
         severity: "info",
         detail: "Vote enregistré",
       });
-      db.auth.signOut()
+      db.auth.signOut();
     }
   }
 
-  const isValid = guess_1 && guess_2 && guess_3;
+  const isValid = guess_1 && guess_2 && guess_3 && giftValue > 0;
   if (loading) {
     return <ProgressSpinner />;
   }
@@ -98,7 +101,11 @@ export default function Page() {
       <Fieldset legend="Vote">
         <div className="field grid">
           <label className="col" htmlFor="guess_1">
-            Choix bleu :
+            <div
+              className="w-1rem h-1rem bg-cyan-500"
+              style={{ marginRight: "0.5rem" }}
+            ></div>
+            Choix turquoise :
           </label>
           <div className="col">
             <Dropdown
@@ -112,7 +119,11 @@ export default function Page() {
         </div>
         <div className="field grid">
           <label className="col" htmlFor="guess_2">
-            Choix rouge :
+            <div
+              className="w-1rem h-1rem bg-pink-500"
+              style={{ marginRight: "0.5rem" }}
+            ></div>
+            Choix rose :
           </label>
           <div className="col">
             <Dropdown
@@ -126,7 +137,11 @@ export default function Page() {
         </div>{" "}
         <div className="field grid">
           <label className="col" htmlFor="guess_3">
-            Choix vert :
+            <div
+              className="w-1rem h-1rem bg-purple-500"
+              style={{ marginRight: "0.5rem" }}
+            ></div>{" "}
+            Choix violet :
           </label>
           <div className="col">
             <Dropdown
@@ -138,9 +153,23 @@ export default function Page() {
             />
           </div>
         </div>
+        <div className="field grid">
+          <label className="col" htmlFor="giftValue">
+            Valeur du cadeau :
+          </label>
+          <div className="col">
+            <InputNumber
+              value={giftValue}
+              onValueChange={(e) => setGiftValue(e.value as number)}
+              mode="currency"
+              currency="EUR"
+              locale="fr-FR"
+            />
+          </div>
+        </div>
         <Button
           disabled={!isValid}
-          icon="pi pi-gift" 
+          icon="pi pi-gift"
           label="Valider"
           onClick={() => void submit()}
         />

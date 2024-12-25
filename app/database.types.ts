@@ -1,3 +1,4 @@
+
 export type Json =
   | string
   | number
@@ -12,6 +13,7 @@ export type Database = {
       vote: {
         Row: {
           created_at: string
+          gift_value: number
           guess_1: string
           guess_2: string
           guess_3: string
@@ -19,6 +21,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          gift_value: number
           guess_1: string
           guess_2: string
           guess_3: string
@@ -26,6 +29,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          gift_value?: number
           guess_1?: string
           guess_2?: string
           guess_3?: string
@@ -145,4 +149,3 @@ export type CompositeTypes<
   : PublicCompositeTypeNameOrOptions extends keyof PublicSchema["CompositeTypes"]
     ? PublicSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
     : never
-Done in 1.13s.

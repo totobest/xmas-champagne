@@ -13,10 +13,12 @@ export function LoginForm(props: {
   const toast = useToastContext();
 
   const [step, setStep] = useState(0);
-  const [phoneNumber, setPhoneNumber] = useState("+33601020304");
-  const [otp, setOpt] = useState("123456");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [otp, setOpt] = useState("");
+  const [pw, setPw] = useState("");
 
-  const isValid = step === 0 ? phoneNumber !== "" : otp !== "";
+  const isValid =
+    phoneNumber !== "" && step === 1 ? otp !== "" : pw !== "";
   const [loading, setLoading] = useState(false);
 
   async function signInWithOtp() {
@@ -58,15 +60,39 @@ export function LoginForm(props: {
       setLoading(false);
     }
   }
+
+  async function verifyPw() {
+    setLoading(true);
+    try {
+      const {
+        data: { session },
+        error,
+      } = await db.auth.signInWithPassword({
+        phone: phoneNumber,
+        password: pw,
+      });
+      if (error) {
+        toast.show({ severity: "error", detail: error.message });
+        throw error;
+      }
+      if (!session) {
+        toast.show({ severity: "error", detail: "No session" });
+        throw new Error("No session");
+      }
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
     <Fieldset legend="Connexion">
       <div className="field grid">
         <label className="col" htmlFor="guess_1">
-          Ton num :
+          {step !== 2 ? <>Ton num</> : <>Ton email</>}
         </label>
         <div className="col">
           <InputText
-            disabled={step !== 0}
+            disabled={step === 1}
             value={phoneNumber}
             onChange={(e) => setPhoneNumber(e.target.value)}
           />{" "}
@@ -87,13 +113,23 @@ export function LoginForm(props: {
           </div>
         </div>
       )}
+      {step === 2 && (
+        <div className="field grid">
+          <label className="col" htmlFor="guess_1">
+            Ton code :
+          </label>
+          <div className="col">
+            <InputText value={pw} onChange={(e) => setPw(e.target.value)} />{" "}
+          </div>
+        </div>
+      )}
 
       <Button
         disabled={!isValid}
-        icon="pi pi-heart" 
+        icon="pi pi-heart"
         loading={loading}
         label="Valider"
-        onClick={() => (step === 0 ? void signInWithOtp() : void verifyOtp())}
+        onClick={() => (step === 0 ? void signInWithOtp() : step === 1 ? void verifyOtp() : void verifyPw())}
       />
     </Fieldset>
   );

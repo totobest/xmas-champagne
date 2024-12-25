@@ -1,7 +1,7 @@
 import db from "~/db";
 import { Fieldset } from "primereact/fieldset";
 import { InputText } from "primereact/inputtext";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import { Button } from "primereact/button";
 import { InputOtp } from "primereact/inputotp";
 import type { Session } from "@supabase/supabase-js";
@@ -14,7 +14,7 @@ export function LoginFormPhoneOTP() {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [otp, setOpt] = useState("");
 
-  const isValid = phoneNumber !== "" &&  otp !== ""
+  const isValid = phoneNumber !== "" && step === 0  || otp !== "";
   const [loading, setLoading] = useState(false);
 
   async function signInWithOtp() {
@@ -92,11 +92,7 @@ export function LoginFormPhoneOTP() {
         icon="pi pi-heart"
         loading={loading}
         label="Valider"
-        onClick={() =>
-          step === 0
-            ? void signInWithOtp()
-            : void verifyOtp()
-        }
+        onClick={() => (step === 0 ? void signInWithOtp() : void verifyOtp())}
       />
     </Fieldset>
   );
@@ -138,32 +134,68 @@ export function LoginFormPhonePW() {
     <Fieldset legend="Connexion">
       <div className="field grid">
         <label className="col" htmlFor="guess_1">
-          {<>Ton num</> }
+          {<>Ton num</>}
         </label>
         <div className="col">
-          <InputText
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-          />{" "}
+          <InputText value={phone} onChange={(e) => setPhone(e.target.value)} />{" "}
         </div>
       </div>
-        <div className="field grid">
-          <label className="col" htmlFor="guess_1">
-            Ton mdp :
-          </label>
-          <div className="col">
-            <InputText value={pw} onChange={(e) => setPw(e.target.value)} />{" "}
-          </div>
+      <div className="field grid">
+        <label className="col" htmlFor="guess_1">
+          Ton mdp :
+        </label>
+        <div className="col">
+          <InputText value={pw} onChange={(e) => setPw(e.target.value)} />{" "}
         </div>
+      </div>
 
       <Button
         disabled={!isValid}
         icon="pi pi-heart"
         loading={loading}
         label="Valider"
-        onClick={() =>
-            void verifyPw()
-        }
+        onClick={() => void verifyPw()}
+      />
+    </Fieldset>
+  );
+}
+
+export function NameForm() {
+  const [name, setName] = useState("");
+  const [loading, setLoading] = useState(false);
+  const isValid = name !== "";
+  const toast = useToastContext();
+  async function submit() {
+    setLoading(true);
+    try {
+      const {data, error} = await db.auth.updateUser({ data: { name } });
+      if (error) {
+        toast.show({ severity: "error", detail: error.message });
+        return
+      } 
+      console.log("user updated", JSON.stringify(data));
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <Fieldset legend="Ton nom?">
+      <div className="field grid">
+        <label className="col" htmlFor="guess_1">
+          {<>Ton nom</>}
+        </label>
+        <div className="col">
+          <InputText value={name} onChange={(e) => setName(e.target.value)} />{" "}
+        </div>
+      </div>
+
+      <Button
+        disabled={!isValid}
+        icon="pi pi-heart"
+        loading={loading}
+        label="Valider"
+        onClick={() => void submit()}
       />
     </Fieldset>
   );
@@ -175,6 +207,7 @@ export default function AuthProvider({
   children: React.ReactNode;
 }) {
   const [session, setSession] = useState<Session | null>(null);
+  const [name, setName] = useState("");
   useEffect(() => {
     const { data } = db.auth.onAuthStateChange((event, session) => {
       console.log("auth event", event);
@@ -192,6 +225,9 @@ export default function AuthProvider({
         // handle token refreshed event
       } else if (event === "USER_UPDATED") {
         // handle user updated event
+        console.log("user updated", JSON.stringify(session?.user?.user_metadata));
+        setName(session?.user?.user_metadata.name);
+
       }
     });
     return () => {
@@ -199,7 +235,11 @@ export default function AuthProvider({
     };
   }, []);
 
-  if (session) return children;
-
+  if (session) {
+    if (!name) {
+      return <NameForm />;
+    }
+    return children;
+  }
   return <LoginFormPhoneOTP />;
 }

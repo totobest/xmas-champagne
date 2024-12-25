@@ -78,7 +78,7 @@ export default function Page() {
         severity: "info",
         detail: "Vote enregistré",
       });
-      db.auth.signOut();
+      //db.auth.signOut();
     }
   }
 
@@ -150,13 +150,13 @@ export default function Page() {
                 Valeur du cadeau :
               </label>
               <div className="col">
-                <InputNumber
-                  value={giftValue}
-                  onValueChange={(e) => setGiftValue(e.value as number)}
-                  mode="currency"
-                  currency="EUR"
-                  locale="fr-FR"
-                />
+                <div className="p-inputgroup">
+                  <InputNumber
+                    value={giftValue}
+                    onValueChange={(e) => setGiftValue(e.value as number)}
+                  />
+                  <span className="p-inputgroup-addon">€</span>
+                </div>
               </div>
             </div>
             <Button

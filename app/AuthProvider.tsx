@@ -216,9 +216,11 @@ export default function AuthProvider({
       } else if (event === "SIGNED_IN") {
         // handle sign in event
         setSession(session);
+        setName(session?.user?.user_metadata.name);
       } else if (event === "SIGNED_OUT") {
         // handle sign out event
         setSession(null);
+        setName("");
       } else if (event === "PASSWORD_RECOVERY") {
         // handle password recovery event
       } else if (event === "TOKEN_REFRESHED") {
